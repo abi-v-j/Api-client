@@ -18,13 +18,16 @@ const GoogleLogin = () => {
       const { user } = result;
       const { email, displayName } = user
       setUser(displayName);
-      setLoading(false); // Set loading state to false if there's an error
+
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000); // 3000 milliseconds = 3 seconds
 
       axios.post("http://localhost:5000/api/user", { email, displayName }).then((response) => {
         sessionStorage.setItem("token", response.data.token)
       }).catch((error) => {
         console.log();
-        alert(error.response.data.msg)
+        console.log(error.response.data.msg)
 
       })
       // Handle successful login (e.g., store user data)
@@ -40,7 +43,9 @@ const GoogleLogin = () => {
 
       const token = sessionStorage.getItem("token");
       if (!token) {
+        setLoading(false); // Set loading state to false if there's an error
         return;
+
       }
 
       // Make request to protected endpoint with JWT token
@@ -51,8 +56,9 @@ const GoogleLogin = () => {
       });
       const user = response.data.user.displayName
       setUser(user);
-      setLoading(false); // Set loading state to false if there's an error
-
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000); // 3000 milliseconds = 3 seconds
 
 
       // Handle response data
@@ -66,6 +72,8 @@ const GoogleLogin = () => {
   useEffect(() => {
     fetchProtectedData();
   }, []); // Call fetchProtectedData whenever user state changes
+
+
   useLayoutEffect(() => {
     setLoading(true); // Set loading state to true before the async operation
 
@@ -78,7 +86,7 @@ const GoogleLogin = () => {
         <Loader />
       ) : (
         user ? (
-          <p>Welcome, {user.displayName}</p>
+          <p>Welcome, {user}</p>
         ) : (
           <Button variant='outlined' onClick={handleGoogleLogin}>Sign in with Google</Button>
         )
